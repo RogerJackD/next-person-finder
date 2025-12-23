@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from "react";
-import { User } from "../types/user";
-import { Search, UserCircle } from "lucide-react";
+import { User, UserDetail } from '../types/user';
+import { FileText, Mail, Phone, Search, Tag, UserCircle, X } from "lucide-react";
 import { userService } from "../services/user-service";
 
 export default function UserSearchDemo() {
@@ -10,6 +10,8 @@ export default function UserSearchDemo() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [detailUser, setDetailUser] = useState<UserDetail | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   const handleSearch = useCallback(async (query: string) => {
     setSearchQuery(query);
@@ -39,80 +41,143 @@ export default function UserSearchDemo() {
     return () => clearTimeout(debounceTimer);
   }, [searchQuery, handleSearch]);
 
+  useEffect(() => {
+    if (selectedUser) {
+      const fetchUserDetail = async () => {
+        setIsLoadingDetail(true);
+        const userFound = await userService.findUserById(selectedUser.id);
+        setDetailUser(userFound);
+        setIsLoadingDetail(false);
+      };
+      fetchUserDetail();
+    }
+  }, [selectedUser]);
+
+  const handleClearSelection = () => {
+    setSelectedUser(null);
+    setDetailUser(null);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">Buscador de Usuarios</h1>
-          <p className="text-slate-600">Busca por nombre, apellido o combinaciones</p>
+    <div className="min-h-screen bg-white p-6 md:p-12">
+      <div className="max-w-3xl mx-auto space-y-6">
+        
+        {/* Search Input */}
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 w-5 h-5" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar usuario..."
+            className="w-full pl-12 pr-4 py-4 text-base bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent transition-all"
+          />
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ej: perez, perez tor, juan torres..."
-              className="w-full pl-12 pr-4 py-4 text-lg border-b border-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
-            />
-          </div>
-
-          <div className="max-h-96 overflow-y-auto">
+        {/* Results List */}
+        {searchQuery && (
+          <div className="border border-neutral-200 rounded-lg overflow-hidden bg-white">
             {isLoading ? (
-              <div className="p-8 text-center text-slate-500">
-                <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-3"></div>
-                Buscando...
+              <div className="p-12 flex flex-col items-center justify-center">
+                <div className="w-6 h-6 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin mb-3"></div>
+                <p className="text-sm text-neutral-500">Buscando...</p>
               </div>
-            ) : searchQuery && users.length === 0 ? (
-              <div className="p-8 text-center text-slate-500">
-                <Search className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                No se encontraron usuarios
+            ) : users.length === 0 ? (
+              <div className="p-12 flex flex-col items-center justify-center">
+                <Search className="w-10 h-10 text-neutral-300 mb-3" />
+                <p className="text-sm text-neutral-500">Sin resultados</p>
               </div>
-            ) : users.length > 0 ? (
+            ) : (
               <div>
-                <div className="px-4 py-2 bg-slate-50 border-b border-slate-200">
-                  <p className="text-sm text-slate-600 font-medium">
+                <div className="px-4 py-2 bg-neutral-50 border-b border-neutral-100">
+                  <p className="text-xs text-neutral-500 font-medium">
                     {users.length} {users.length === 1 ? 'resultado' : 'resultados'}
                   </p>
                 </div>
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-neutral-100 max-h-80 overflow-y-auto">
                   {users.map((user) => (
                     <button
                       key={user.id}
                       onClick={() => setSelectedUser(user)}
-                      className="w-full px-4 py-3 hover:bg-blue-50 transition-colors text-left flex items-center gap-3 group"
+                      className="w-full px-4 py-3 hover:bg-neutral-50 transition-colors text-left flex items-center gap-3 group"
                     >
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                        <UserCircle className="w-5 h-5 text-blue-600" />
+                      <div className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center group-hover:bg-neutral-900 transition-colors">
+                        <UserCircle className="w-4 h-4 text-neutral-600 group-hover:text-white transition-colors" />
                       </div>
-                      <div>
-                        <p className="font-medium text-slate-800">
-                          {user.firstName} {user.lastName}
-                        </p>
-                      </div>
+                      <p className="text-sm font-medium text-neutral-900">
+                        {user.firstName} {user.lastName}
+                      </p>
                     </button>
                   ))}
                 </div>
               </div>
+            )}
+          </div>
+        )}
+
+        {/* User Detail Card */}
+        {detailUser && (
+          <div className="border border-neutral-200 rounded-lg p-6 bg-white relative">
+            <button
+              onClick={handleClearSelection}
+              className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-full transition-colors"
+            >
+              <X className="w-4 h-4 text-neutral-500" />
+            </button>
+
+            {isLoadingDetail ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="w-6 h-6 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin"></div>
+              </div>
             ) : (
-              <div className="p-8 text-center text-slate-400">
-                <Search className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                Escribe para buscar usuarios
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 pb-4 border-b border-neutral-100">
+                  <div className="w-12 h-12 rounded-full bg-neutral-900 flex items-center justify-center">
+                    <UserCircle className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-neutral-900">{detailUser.nombre}</h3>
+                    <p className="text-xs text-neutral-500">ID: {detailUser.id}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3">
+                    <Mail className="w-4 h-4 text-neutral-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-neutral-500 mb-0.5">Email</p>
+                      <p className="text-sm text-neutral-900">{detailUser.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Phone className="w-4 h-4 text-neutral-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-neutral-500 mb-0.5">Celular</p>
+                      <p className="text-sm text-neutral-900">{detailUser.celular}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <FileText className="w-4 h-4 text-neutral-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-neutral-500 mb-0.5">Documento</p>
+                      <p className="text-sm text-neutral-900">{detailUser.documento}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Tag className="w-4 h-4 text-neutral-400 mt-0.5" />
+                    <div>
+                      <p className="text-xs text-neutral-500 mb-0.5">Tipo</p>
+                      <p className="text-sm text-neutral-900">{detailUser.tipo}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
-        </div>
-
-        {selectedUser && (
-          <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-900 mb-1">Usuario seleccionado:</p>
-            <p className="text-lg font-bold text-blue-700">
-              {selectedUser.firstName} {selectedUser.lastName} (ID: {selectedUser.id})
-            </p>
-          </div>
-        )} 
+        )}
       </div>
     </div>
   );
