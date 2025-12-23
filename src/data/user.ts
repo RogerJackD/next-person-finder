@@ -26,4 +26,7 @@ export const usersData: User[] = [
   { id: 23, firstName: "Andrés", lastName: "Morales" },
   { id: 24, firstName: "Valeria", lastName: "Morales" },
   { id: 25, firstName: "Fernando", lastName: "Cruz" },
+  { id: 26, firstName: "Torres", lastName: "Perez Juan" },
+  { id: 27, firstName: "Perez", lastName: "Cruz Gilberto" },
+
 ];
