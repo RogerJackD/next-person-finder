@@ -1,5 +1,5 @@
-import { usersData } from "../data/user";
-import { User } from "../types/user";
+import { usersData, usersDetailMock } from "../data/user";
+import { User, UserDetail } from "../types/user";
 
 export const userService = {
   
@@ -32,5 +32,11 @@ export const userService = {
     });
 
     return filteredUsers;
+  },
+  
+  findUserById: async (id: number): Promise<UserDetail | null> => {
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const user = usersDetailMock.find(user => user.id === id) || null;
+    return user;
   }
 };
