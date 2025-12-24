@@ -82,7 +82,6 @@ export function UserSearchModal({ isOpen, onClose, onUserSelect }: UserSearchMod
 
   return (
     <>
-      {/* Overlay */}
       <div 
         className="fixed inset-0 bg-black/50 z-40 transition-opacity"
         onClick={handleClose}
@@ -90,10 +89,9 @@ export function UserSearchModal({ isOpen, onClose, onUserSelect }: UserSearchMod
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
           
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200 shrink-0">
             <h2 className="text-lg font-semibold text-neutral-900">Seleccionar Usuario</h2>
             <button
               onClick={handleClose}
@@ -103,32 +101,36 @@ export function UserSearchModal({ isOpen, onClose, onUserSelect }: UserSearchMod
             </button>
           </div>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            <UserSearchInput
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              users={users}
-              isLoading={isLoading}
-              onUserSelect={handleUserSelect}
-              placeholder="Buscar usuario en modal..."
-            />
-
-            {detailUser && (
-              <UserDetailCard
-                detailUser={detailUser}
-                isLoading={isLoadingDetail}
-                onClose={() => {
-                  setSelectedUser(null);
-                  setDetailUser(null);
-                }}
+          {/* Content - Sin overflow para permitir dropdown absoluto */}
+          <div className="flex-1 px-6 pt-6 pb-4 overflow-visible">
+            <div className="mb-6">
+              <UserSearchInput
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                users={users}
+                isLoading={isLoading}
+                onUserSelect={handleUserSelect}
+                placeholder="Buscar usuario en modal..."
               />
-            )}
+            </div>
+
+            {/* Área de detalles con scroll propio si es necesario */}
+            <div className="max-h-[calc(85vh-280px)] overflow-y-auto">
+              {detailUser && (
+                <UserDetailCard
+                  detailUser={detailUser}
+                  isLoading={isLoadingDetail}
+                  onClose={() => {
+                    setSelectedUser(null);
+                    setDetailUser(null);
+                  }}
+                />
+              )}
+            </div>
           </div>
 
-          {/* Footer */}
           {selectedUser && detailUser && (
-            <div className="px-6 py-4 border-t border-neutral-200 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-neutral-200 flex justify-end gap-3 shrink-0">
               <button
                 onClick={handleClose}
                 className="px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"

@@ -28,11 +28,17 @@ export default function UserSearchDemo() {
     console.log('Usuario seleccionado desde modal:', user, detail);
   };
 
+  const handleOpenModal = () => {
+    // Limpiar búsqueda del primer buscador antes de abrir modal
+    setSearchQuery('');
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-white p-6 md:p-12">
-      <div className="max-w-3xl mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto">
         
-        <div className="flex gap-3">
+        <div className="flex gap-3 mb-6">
           <div className="flex-1">
             <UserSearchInput
               searchQuery={searchQuery}
@@ -44,7 +50,7 @@ export default function UserSearchDemo() {
           </div>
           
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={handleOpenModal}
             className="h-14 px-4 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg transition-colors flex items-center justify-center gap-2 shrink-0"
           >
             <Plus className="w-5 h-5" />
@@ -52,25 +58,27 @@ export default function UserSearchDemo() {
           </button>
         </div>
 
-        {detailUser && (
-          <UserDetailCard
-            detailUser={detailUser}
-            isLoading={isLoadingDetail}
-            onClose={clearSelection}
-          />
-        )}
+        <div className="space-y-6">
+          {detailUser && (
+            <UserDetailCard
+              detailUser={detailUser}
+              isLoading={isLoadingDetail}
+              onClose={clearSelection}
+            />
+          )}
 
-        {modalSelectedUser && (
-          <div className="border border-blue-200 bg-blue-50 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-900 mb-2">
-              Usuario seleccionado desde modal:
-            </p>
-            <p className="text-sm text-blue-700">
-              {modalSelectedUser.user.razonSocial} {modalSelectedUser.user.apellidoCompleto}, Documento Nro: {modalSelectedUser.user.numeroDocumentoIdentidad}
-              {modalSelectedUser.detail && ` ${modalSelectedUser.detail.email}`} 
-            </p>
-          </div>
-        )}
+          {modalSelectedUser && (
+            <div className="border border-blue-200 bg-blue-50 rounded-lg p-4">
+              <p className="text-sm font-medium text-blue-900 mb-2">
+                Usuario seleccionado desde modal:
+              </p>
+              <p className="text-sm text-blue-700">
+                {modalSelectedUser.user.razonSocial} {modalSelectedUser.user.apellidoCompleto}, Documento Nro: {modalSelectedUser.user.numeroDocumentoIdentidad}
+                {modalSelectedUser.detail && ` ${modalSelectedUser.detail.email}`} 
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <UserSearchModal
