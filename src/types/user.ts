@@ -1,15 +1,17 @@
 export interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
+  idPersona: string;
+  apellidoCompleto: string;
+  razonSocial: string;
+  numeroDocumentoIdentidad: string;
 }
 
 export interface UserDetail {
-  id: number;
+  id: string;
   nombre: string;
   apellidos: string;
   documento: string;
-  tipo: "DNI" | "CE";
+  tipoDocumento: string;
+  tipoPersona: string;
   email: string;
   celular: string;
 }
