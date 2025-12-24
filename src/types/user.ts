@@ -1,6 +1,6 @@
 export interface User {
   idPersona: string;
-  apellidoCompleto: string;
+  //apellidoCompleto: string;
   razonSocial: string;
   numeroDocumentoIdentidad: string;
 }
@@ -14,4 +14,5 @@ export interface UserDetail {
   tipoPersona: string;
   email: string;
   celular: string;
+  razonSocial: string;
 }

@@ -30,7 +30,7 @@ export function UserDetailCard({ detailUser, isLoading, onClose }: UserDetailCar
               <UserCircle className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-neutral-900">{detailUser.nombre} {detailUser.apellidos}</h3>
+              <h3 className="font-semibold text-neutral-900">{detailUser.razonSocial}</h3>
             </div>
           </div>
 
